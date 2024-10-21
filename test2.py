@@ -4,9 +4,9 @@ import os
 
 #other motor:
 #A+ = Black
-#A- = Green
-#B+ = Red
-#B- = Blue
+#A- = Blue
+#B+ = Green
+#B- = Red
 #1.50 Amps
 #1600 pulse/rev
 
