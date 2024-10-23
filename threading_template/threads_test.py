@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
 
     #create threads
-    threads = [threading.Thread(target=printstuff, args=(i, )) for i in range(4)]
+    threads = [threading.Thread(target=printstuff, args=(i, )) for i in range(5)]
 
     #start threads
     for t in threads:
