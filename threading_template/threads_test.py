@@ -4,6 +4,7 @@ from queue import Queue
 
 def printstuff(stuff):
     while True:
+        sleep(1)
         print(stuff)
 
 if __name__ == "__main__":
