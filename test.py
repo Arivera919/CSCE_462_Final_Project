@@ -8,7 +8,7 @@ import os
 #B+ = Red
 #B- = Blue
 #2 Amps
-#1600 pulse/rev
+#800 pulse/rev
 
 #motor 1
 #Direction pin
@@ -29,7 +29,7 @@ GPIO.setup(STEP_1, GPIO.OUT)
 GPIO.output(DIR_1, CW)
 
 
-sleepTime_1 = 0.005/16
+sleepTime_1 = 0.005/8
 steps_1 = 0
 changeDir_1 = False
 currentDir_1 = CW
@@ -62,10 +62,10 @@ try:
         #print(sleepTime_1)
 
         #needs time to change direction
-        if (steps_1 == 19200 or steps_1 == -19200):
-           #changer = input("change direction? (y/n):")
-            #if (changer == "y"):
-            changeDir_1 = True
+        if (steps_1 % 800 == 0):
+           changer = input("change direction? (y/n):")
+            if (changer == "y"):
+                changeDir_1 = True
 
 except KeyboardInterrupt:
     print("cleanup")
@@ -80,9 +80,9 @@ except KeyboardInterrupt:
 
     while (steps_1 != 0):
         GPIO.output(STEP_1, GPIO.HIGH)
-        sleep(sleepTime_1)
+        sleep(0.005/16)
         GPIO.output(STEP_1, GPIO.LOW)
-        sleep(sleepTime_1)
+        sleep(0.005/16)
         if (currentDir_1 == CW):
             steps_1 = steps_1 + 1
         elif (currentDire_1 == CCW):

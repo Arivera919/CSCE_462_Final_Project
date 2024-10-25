@@ -8,7 +8,7 @@ import os
 #B+ = Green
 #B- = Red
 #1.50 Amps
-#1600 pulse/rev
+#800 pulse/rev
 
 #motor 2
 #Direction pin
