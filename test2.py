@@ -12,9 +12,9 @@ import os
 
 #motor 2
 #Direction pin
-DIR_2 = 17
+DIR_2 = 23
 #Step pin
-STEP_2 = 27
+STEP_2 = 24
 
 #clockwise vs counterclockwise
 CW = 1
@@ -28,7 +28,7 @@ GPIO.setup(STEP_2, GPIO.OUT)
 #how to set direction
 GPIO.output(DIR_2, CCW)
 
-sleepTime_2 = 0.005
+sleepTime_2 = 0.005/8
 steps_2 = 0
 changeDir_2 = false
 currentDir_2 = CCW
@@ -53,15 +53,18 @@ try:
         sleep(sleepTime_2) #determine how fast stepper motor will run
         GPIO.output(STEP_2, GPIO.LOW)
         sleep(sleepTime_2)
-        steps_2 = steps_2 + 1
+        if (currentDir_2 == CW):
+            steps_2 = steps_2 + 1
+        elif (currentDir_2 == CCW):
+            steps_2 = steps_2 - 1
         print(steps_2)
-        print(sleepTime_2)
+        #print(sleepTime_2)
 
         #needs time to change direction
-        if (steps_2 == 3200):
+        if (steps_2 == 9600 or steps_2 == -9600):
             sleep(0.5)
             changeDir_2 = True
-            steps_2 = 0
+            #steps_2 = 0
 
 except KeyboardInterrupt:
     print("cleanup")

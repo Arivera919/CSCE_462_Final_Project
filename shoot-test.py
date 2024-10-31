@@ -39,7 +39,7 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
             steps = steps + 1
         elif (currentDir == CCW):
             steps = steps - 1
-        print(steps)
+        #print(steps)
         #print(sleepTime_1)
 
         if ((steps == goal or steps == goal*-1) and (not win_event.is_set())):
@@ -66,7 +66,7 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
         sleep(0.005/16)
         if (currentDir == CW):
             steps = steps + 1
-        elif (currentDire == CCW):
+        elif (currentDir == CCW):
             steps = steps - 1
         print(steps)
 
@@ -74,11 +74,11 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
 def sensor_thread(hit_event, win_event):
 
     while not win_event.is_set():
-        changer = input("change direction? (y/n):")#final program will use target class
-            if (changer == "y" and (not win_event.is_set())):
-                hit_event.set()
-                while hit_event.is_set():
-                    sleep(0.1)#waits until motor finishes changing direction before allowing another hit
+        changer = input("change direction?")#final program will use target class
+        if (not win_event.is_set()):
+            hit_event.set()
+            while hit_event.is_set():
+                sleep(0.1)#waits until motor finishes changing direction before allowing another hit
 
 
 if __name__ == '__main__':
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     #Step pin
     STEP_1 = 27
 
-    goal = 19200 #where target's position at center is 0, goal is number of steps needed to get from center to either goal
+    goal = 9600 #where target's position at center is 0, goal is number of steps needed to get from center to either goal
 
     GPIO.setmode(GPIO.BCM)
 
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     sensor1.start()
 
     #waits for win condition to be met and then waits for threads to finish
-    win_event.wait()
+    #win_event.wait()
     motor1.join()
     sensor1.join()
 
