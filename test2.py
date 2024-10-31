@@ -68,4 +68,24 @@ try:
 
 except KeyboardInterrupt:
     print("cleanup")
+    if(steps_2 > 0):
+        sleep(0.5)
+        GPIO.output(DIR_2, CCW)
+        currentDir_2 = CCW
+    elif(steps_2 < 0):
+        sleep(0.5)
+        GPIO.output(DIR_2, CW)
+        currentDir_2 = CW
+
+    while (steps_2 != 0):
+        GPIO.output(STEP_2, GPIO.HIGH)
+        sleep(0.005/16)
+        GPIO.output(STEP_2, GPIO.LOW)
+        sleep(0.005/16)
+        if (currentDir_2 == CW):
+            steps_2 = steps_2 + 1
+        elif (currentDire_2 == CCW):
+            steps_2 = steps_2 - 1
+        print(steps_2)
+
     GPIO.cleanup()
