@@ -30,7 +30,7 @@ GPIO.output(DIR_2, CCW)
 
 sleepTime_2 = 0.005/8
 steps_2 = 0
-changeDir_2 = false
+changeDir_2 = False
 currentDir_2 = CCW
 
 try:
@@ -61,7 +61,7 @@ try:
         #print(sleepTime_2)
 
         #needs time to change direction
-        if (steps_2 == 9600 or steps_2 == -9600):
+        if (steps_2 == 8000 or steps_2 == -8000):
             sleep(0.5)
             changeDir_2 = True
             #steps_2 = 0

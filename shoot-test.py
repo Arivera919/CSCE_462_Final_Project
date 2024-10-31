@@ -1,4 +1,5 @@
 from time import sleep
+import sys
 import threading
 import RPi.GPIO as GPIO
 import random
@@ -85,28 +86,42 @@ if __name__ == '__main__':
     #motor 1
     #Direction pin
     DIR_1 = 17
+    DIR_2 = 23
     #Step pin
     STEP_1 = 27
+    STEP_2 = 24
 
-    goal = 9600 #where target's position at center is 0, goal is number of steps needed to get from center to either goal
+    goal_1 = 9600 #where target's position at center is 0, goal is number of steps needed to get from center to either goal
+    goal_2 = 8000
 
     GPIO.setmode(GPIO.BCM)
 
     GPIO.setup(DIR_1, GPIO.OUT)
+    GPIO.setup(DIR_2, GPIO.OUT)
     GPIO.setup(STEP_1, GPIO.OUT)
+    GPIO.setup(STEP_2, GPIO.OUT)
 
     win_event = threading.Event()
-    hit_event = threading.Event() #will need a second hit_event when second motor is introduced
+    hit_event1 = threading.Event() #will need a second hit_event when second motor is introduced
+    hit_event2 = threading.Event()
 
-    motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal, hit_event, win_event))
-    sensor1 = threading.Thread(target=sensor_thread, args=(hit_event, win_event))
+    motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event))
+    motor2 = threading.Thread(target=motor_thread, args=(DIR_2, STEP_2, goal_2, hit_event2, win_event))
+    sensor1 = threading.Thread(target=sensor_thread, args=(hit_event1, win_event))
+    sensor2 = threading.Thread(target=sensor_thread, args=(hit_event2, win_event))
 
     motor1.start()
+    motor2.start()
     sensor1.start()
+    sleep(1)
+    sensor2.start()
 
     #waits for win condition to be met and then waits for threads to finish
     #win_event.wait()
     motor1.join()
+    motor2.join()
     sensor1.join()
+    sensor2.join()
 
     GPIO.cleanup()
+    #sys.exit(0)
