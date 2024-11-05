@@ -62,10 +62,10 @@ try:
         #print(sleepTime_1)
 
         #needs time to change direction
-        if (steps_1 % 800 == 0):
-           changer = input("change direction? (y/n):")
-            if (changer == "y"):
-                changeDir_1 = True
+        if (steps_1 == 9600 or steps_1 == -9600):
+           #changer = input("change direction? (y/n):")
+           #if (changer == "y"):
+           changeDir_1 = True
 
 except KeyboardInterrupt:
     print("cleanup")
