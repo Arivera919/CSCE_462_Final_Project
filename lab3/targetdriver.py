@@ -28,8 +28,8 @@ class Target:
         self.threshold = threshold
 
     def detectHit():
-        hit0 = self.chan0.voltage > self.threshold
-        hit1 = self.chan1.voltage > self.threshold
+        hit0 = self.chan0.voltage < self.threshold
+        hit1 = self.chan1.voltage < self.threshold
         return(hit0, hit1)
 
 
