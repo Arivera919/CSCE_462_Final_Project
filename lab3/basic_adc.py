@@ -12,7 +12,7 @@ from adafruit_mcp3xxx.analog_in import AnalogIn
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 
 # create the cs (chip select)
-cs = digitalio.DigitalInOut(board.D21)
+cs = digitalio.DigitalInOut(board.D22)
 
 # create the mcp object
 mcp = MCP.MCP3008(spi, cs)
@@ -20,6 +20,8 @@ mcp = MCP.MCP3008(spi, cs)
 # create analog input channels
 chan0 = AnalogIn(mcp, MCP.P0)
 
+t=0
 while True:
-    print(chan0.voltage)
-    sleep(0.1)
+    print(t, ":", chan0.voltage)
+    t += 1
+    sleep(.1)
