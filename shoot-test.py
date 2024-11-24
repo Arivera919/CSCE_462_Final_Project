@@ -107,7 +107,7 @@ if __name__ == '__main__':
     #where target's position at center is 0, goal is number of steps needed to get from center to either goal
     goal_1 = 9600 
     goal_2 = 8000
-    threshold = -1
+    threshold = 2.95 
 
     GPIO.setmode(GPIO.BCM)
 
