@@ -1,5 +1,5 @@
 from time import sleep
-from targetdriver.py import Target
+from targetdriver import Target
 import sys
 import threading
 import RPi.GPIO as GPIO
@@ -79,7 +79,7 @@ def sensor_thread(hit_event, win_event, sensor, sel):
 
     while not win_event.is_set():
         
-        hits = sensor.detectHit()
+        hits = sensor.detectHit(0), sensor.detectHit(1)
         if (not win_event.is_set()):
             if (hits[sel]):
                 hit_event.set()
@@ -141,4 +141,3 @@ if __name__ == '__main__':
 
     GPIO.cleanup()
     print("GAME OVER")
-    return
