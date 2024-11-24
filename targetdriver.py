@@ -27,28 +27,25 @@ class Target:
 
         self.threshold = threshold
 
-    def detectHit(self):
+    def detectHit(self, sel):
         #filter out no signal: 0.0
-        v0 = self.chan0.voltage
-        v1 = self.chan1.voltage
+        v = self.chan0.voltage if sel==0 else self.chan1.voltage
+        v2 = self.chan0.voltage if sel==0 else self.chan1.voltage
+        hit = v < self.threshold and v != 0.0 and v2 < self.threshold and v2 != 0.0
+        
 
-        hit0 = v0 < self.threshold and v0 != 0.0
-        hit1 = v1 < self.threshold and v1 != 0.0
-        return(hit0, hit1)
+        if hit:
+            print(f"Detected hit at channel {sel}. V = {v}V")
+            sleep(.1)
+        return 
 
 
 if __name__ == "__main__":
-    t = Target(2.95) 
+    t = Target(3) 
     time = 0
 
     while True:
-        hits = t.detectHit()
-        if hits[0]:
-            print(f"Target 0 hit at t = {time}0ms")
-            sleep(.5)
-        sleep(.01)
-        time += 1
-        #if hits[1]:
-            #print("Target 1 hit")
-        
+        t.detectHit(0)
+        t.detectHit(1)
+        sleep(.1)
 

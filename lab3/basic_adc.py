@@ -19,9 +19,10 @@ mcp = MCP.MCP3008(spi, cs)
 
 # create analog input channels
 chan0 = AnalogIn(mcp, MCP.P0)
+chan1 = AnalogIn(mcp, MCP.P1)
 
 t=0
 while True:
-    print(t, ":", chan0.voltage)
+    print(t, ":", round(chan0.voltage, 3), round(chan1.voltage, 3))
     t += 1
     sleep(.1)
