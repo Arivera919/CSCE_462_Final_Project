@@ -10,10 +10,12 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
     CCW = 0
 
     steps = 0
-    sleepTime = 0.005/8
+    sleepTime = 0.005/4
 
     hit_event.wait() #target will not move until a hit is detected
-    
+    print("hit!")
+
+
     currentDir = random.choice([CW, CCW])
     GPIO.output(DIR, currentDir)
     hit_event.clear()
@@ -75,17 +77,24 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
     return
 
 #TODO: Integrate Target class
-def sensor_thread(hit_event, win_event, sensor, sel):
+def sensor_thread(hit_event1, hit_event2,  win_event, sensor):
 
     while not win_event.is_set():
         
-        hit = sensor.detectHit(sel) 
-        if (not win_event.is_set()):
-            if (hit):
-                hit_event.set()
-                while hit_event.is_set():
-                    sleep(0.1)
+        if sensor.detectHit(0) and not hit_event1.is_set():
+            hit_event1.set()
 
+
+        if sensor.detectHit(1) and not win_event.is_set():
+            hit_event2.set()
+
+
+        #hit = sensor.detectHit(sel) 
+        #if (not win_event.is_set()):
+            #if (hit):
+                #hit_event.set()
+                #while hit_event.is_set():
+                    #sleep(0.1)
 
         #changer = input("change direction?")#final program will use target class
         #if (not win_event.is_set()):
@@ -125,20 +134,17 @@ if __name__ == '__main__':
 
     #motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event))
     motor2 = threading.Thread(target=motor_thread, args=(DIR_2, STEP_2, goal_2, hit_event2, win_event))
-    #sensor1 = threading.Thread(target=sensor_thread, args=(hit_event1, win_event, targets, 0))
-    sensor2 = threading.Thread(target=sensor_thread, args=(hit_event2, win_event, targets, 1))
+    sensor = threading.Thread(target=sensor_thread, args=(hit_event1, hit_event2,  win_event, targets))
 
     #motor1.start()
     motor2.start()
-    #sensor1.start()
-    sensor2.start()
+    sensor.start()
 
     #waits for win condition to be met and then waits for threads to finish
     #win_event.wait()
     #motor1.join()
     motor2.join()
-    #sensor1.join()
-    sensor2.join()
+    sensor.join()
 
     GPIO.cleanup()
     print("GAME OVER")

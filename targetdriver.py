@@ -22,8 +22,8 @@ class Target:
         self.mcp = MCP.MCP3008(self.spi, self.cs)
 
         # create analog input channels
-        self.chan0 = AnalogIn(self.mcp, MCP.P0)
-        self.chan1 = AnalogIn(self.mcp, MCP.P1)
+        self.chan0 = AnalogIn(self.mcp, MCP.P1)
+        self.chan1 = AnalogIn(self.mcp, MCP.P2)
 
         self.threshold = threshold
 
@@ -37,9 +37,9 @@ class Target:
         if hit:
             print(f"Detected hit at channel {sel}. V = {v}V")
             sleep(.1)
-        return 
+        return hit 
 
-
+#Basic hit detection tester
 if __name__ == "__main__":
     t = Target(3) 
     time = 0

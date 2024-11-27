@@ -18,11 +18,11 @@ cs = digitalio.DigitalInOut(board.D22)
 mcp = MCP.MCP3008(spi, cs)
 
 # create analog input channels
-chan0 = AnalogIn(mcp, MCP.P0)
-chan1 = AnalogIn(mcp, MCP.P1)
+chan0 = AnalogIn(mcp, MCP.P1)
+chan1 = AnalogIn(mcp, MCP.P2)
 
 t=0
 while True:
     print(t, ":", round(chan0.voltage, 3), round(chan1.voltage, 3))
     t += 1
-    sleep(.1)
+    sleep(.5)
