@@ -85,7 +85,7 @@ except KeyboardInterrupt:
         sleep(0.005/16)
         if (currentDir_1 == CW):
             steps_1 = steps_1 + 1
-        elif (currentDire_1 == CCW):
+        elif (currentDir_1 == CCW):
             steps_1 = steps_1 - 1
         print(steps_1)
 
