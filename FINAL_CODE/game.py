@@ -24,6 +24,7 @@ def motor_thread(motor, hit_event, win_event, error_event):
 
         if (hit_event.is_set()):
             motor.change_dir()
+            hit_event.clear()
         
 
         motor.motor_step()
