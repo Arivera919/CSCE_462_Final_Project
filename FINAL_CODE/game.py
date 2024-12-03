@@ -20,9 +20,9 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
         sleep(0.005/32) #determine how fast stepper motor will run
         GPIO.output(STEP, GPIO.LOW)
         sleep(0.005/32)
-        if (currentDir == CW):
+        if (DIR == CW):
             steps = steps + 1
-        elif (currentDir == CCW):
+        elif (DIR == CCW):
             steps = steps - 1
         
         if (steps == 100):
