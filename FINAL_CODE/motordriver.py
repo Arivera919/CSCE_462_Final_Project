@@ -55,7 +55,7 @@ class Motor:
                 GPIO.output(self.dir, self.CW)
                 self.currentDir = self.CW
         
-        if first_hit:
+        if not first_hit:
             self.sleepTime = self.sleepTime / 2
 
     def check_win(self):
