@@ -16,7 +16,7 @@ def motor_thread(motor, hit_event, win_event, error_event):
     print("hit!")
 
 
-    currentDir = random.choice([CW, CCW])
+    currentDir = random.choice([1, 0])
     motor.change_dir(currentDir, False)
     hit_event.clear()
 
