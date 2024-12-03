@@ -5,12 +5,31 @@ import threading
 import RPi.GPIO as GPIO
 import random
 
-def motor_thread(DIR, STEP, goal, hit_event, win_event):
+def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
     CW = 1
     CCW = 0
 
     steps = 0
     sleepTime = 0.005/4
+
+    
+    #the game started normally
+    while True:
+        GPIO.output(DIR, CW)
+        GPIO.output(STEP, GPIO.HIGH)
+        sleep(0.005/32) #determine how fast stepper motor will run
+        GPIO.output(STEP, GPIO.LOW)
+        sleep(0.005/32)
+        if (currentDir == CW):
+            steps = steps + 1
+        elif (currentDir == CCW):
+            steps = steps - 1
+        
+        if (steps == 100):
+            sleep(0.5)
+            GPIO.output(DIR, CCW)
+        elif (steps == -100):
+            break
 
     hit_event.wait() #target will not move until a hit is detected
     print("hit!")
@@ -20,7 +39,7 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
     GPIO.output(DIR, currentDir)
     hit_event.clear()
 
-    while not win_event.is_set():
+    while not win_event.is_set() and not error_event.is_set():
 
         if (hit_event.is_set() and currentDir == CW):
             sleep(0.5)
@@ -74,34 +93,44 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event):
             steps = steps - 1
         print(steps)
 
+    if error_event.is_set():
+        while True:
+        GPIO.output(DIR, CW)
+        GPIO.output(STEP, GPIO.HIGH)
+        sleep(0.005/32) #determine how fast stepper motor will run
+        GPIO.output(STEP, GPIO.LOW)
+        sleep(0.005/32)
+        if (currentDir == CW):
+            steps = steps + 1
+        elif (currentDir == CCW):
+            steps = steps - 1
+        
+        if (steps == 100):
+            sleep(0.5)
+            GPIO.output(DIR, CCW)
+        elif (steps == -100):
+            break
+
     return
 
 #TODO: Integrate Target class
-def sensor_thread(hit_event1, hit_event2,  win_event, sensor):
+def sensor_thread(hit_event1, hit_event2,  win_event, error_event, sensor):
 
-    while not win_event.is_set():
+    try:
         
-        if sensor.detectHit(0) and not hit_event1.is_set():
-            hit_event1.set()
+        while not win_event.is_set():
+            
+            if sensor.detectHit(0) and not hit_event1.is_set():
+                hit_event1.set()
 
 
-        if sensor.detectHit(1) and not win_event.is_set():
-            hit_event2.set()
+            if sensor.detectHit(1) and not win_event.is_set():
+                hit_event2.set()
 
+    except:
 
-        #hit = sensor.detectHit(sel) 
-        #if (not win_event.is_set()):
-            #if (hit):
-                #hit_event.set()
-                #while hit_event.is_set():
-                    #sleep(0.1)
-
-        #changer = input("change direction?")#final program will use target class
-        #if (not win_event.is_set()):
-        #    hit_event.set()
-        #    while hit_event.is_set():
-        #        sleep(0.1)#waits until motor finishes changing direction before allowing another hit
-    
+        error_event.set()
+ 
     return
 
 
@@ -131,6 +160,7 @@ if __name__ == '__main__':
     win_event = threading.Event()
     hit_event1 = threading.Event()
     hit_event2 = threading.Event()
+    error_event = threading.Event()
 
     while True:
         motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event))
