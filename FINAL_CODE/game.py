@@ -1,72 +1,34 @@
 from time import sleep
 from targetdriver import Target
+from motordriver import Motor
 import sys
 import threading
 import RPi.GPIO as GPIO
 import random
 
-def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
-    CW = 1
-    CCW = 0
-
-    steps = 0
-    sleepTime = 0.005/4
-    currentDir = CW
+def motor_thread(motor, hit_event, win_event, error_event):
     
     #the game started normally
-    while True:
-        GPIO.output(DIR, CW)
-        GPIO.output(STEP, GPIO.HIGH)
-        sleep(0.005/32) #determine how fast stepper motor will run
-        GPIO.output(STEP, GPIO.LOW)
-        sleep(0.005/32)
-        if (currentDir == CW):
-            steps = steps + 1
-        elif (currentDir == CCW):
-            steps = steps - 1
-        
-        if (steps == 100):
-            sleep(0.5)
-            GPIO.output(DIR, CCW)
-            currentDir = CCW
-        elif (steps == -100):
-            break
+    motor.change_dir()
+    motor.normal_start()
 
     hit_event.wait() #target will not move until a hit is detected
     print("hit!")
 
 
     currentDir = random.choice([CW, CCW])
-    GPIO.output(DIR, currentDir)
+    motor.change_dir(currentDir, False)
     hit_event.clear()
 
     while not win_event.is_set() and not error_event.is_set():
 
-        if (hit_event.is_set() and currentDir == CW):
-            sleep(0.5)
-            GPIO.output(DIR, CCW)
-            currentDir = CCW
-            sleepTime = sleepTime / 2
-            hit_event.clear()
-        elif (hit_event.is_set() and currentDir == CCW):
-            sleep(0.5)
-            GPIO.output(DIR, CW)
-            currentDir = CW
-            sleepTime = sleepTime / 2
-            hit_event.clear()
+        if (hit_event.is_set()):
+            motor.change_dir()
+        
 
-        GPIO.output(STEP, GPIO.HIGH)
-        sleep(sleepTime) #determine how fast stepper motor will run
-        GPIO.output(STEP, GPIO.LOW)
-        sleep(sleepTime)
-        if (currentDir == CW):
-            steps = steps + 1
-        elif (currentDir == CCW):
-            steps = steps - 1
-        #print(steps)
-        #print(sleepTime_1)
+        motor.motor_step()
 
-        if ((steps == goal or steps == goal*-1) and (not win_event.is_set())):
+        if (motor.check_win() and (not win_event.is_set())):
             win_event.set()
 
     #LEDs on targets will flash with the color of the winner
@@ -74,49 +36,12 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
     #Red = Player 2
 
     #After breaking out of loop, target resets itself back to 0
-    if(steps > 0):
-        sleep(0.5)
-        GPIO.output(DIR, CCW)
-        currentDir = CCW
-    elif(steps < 0):
-        sleep(0.5)
-        GPIO.output(DIR, CW)
-        currentDir = CW
-
-    while (steps != 0):
-        GPIO.output(STEP, GPIO.HIGH)
-        sleep(0.005/16)
-        GPIO.output(STEP, GPIO.LOW)
-        sleep(0.005/16)
-        if (currentDir == CW):
-            steps = steps + 1
-        elif (currentDir == CCW):
-            steps = steps - 1
-        print(steps)
+    motor.reset_motor()
 
     if error_event.is_set():
-        while True:
-            GPIO.output(DIR, CW)
-            GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005/32) #determine how fast stepper motor will run
-            GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005/32)
-            if (currentDir == CW):
-                steps = steps + 1
-            elif (currentDir == CCW):
-                steps = steps - 1
-        
-            if (steps == 100):
-                sleep(0.5)
-                GPIO.output(DIR, CCW)
-            elif (steps == -100):
-                break
+        motor.normal_start()
 
     return
-
-
-#def motor_step(DIR, STEP, sleepTime):
-
 
 
 def sensor_thread(hit_event1, hit_event2,  win_event, error_event, sensor):
@@ -153,13 +78,9 @@ if __name__ == '__main__':
     goal_2 = 8000
     threshold = 2.8 
 
-    GPIO.setmode(GPIO.BCM)
-
-    GPIO.setup(DIR_1, GPIO.OUT)
-    GPIO.setup(DIR_2, GPIO.OUT)
-    GPIO.setup(STEP_1, GPIO.OUT)
-    GPIO.setup(STEP_2, GPIO.OUT)
-
+    motor_1 = Motor(DIR_1, STEP_1, goal_1)
+    motor_2 = Motor(DIR_2, STEP_2, goal_2)
+    
     targets = Target(threshold)
 
     win_event = threading.Event()
@@ -168,8 +89,8 @@ if __name__ == '__main__':
     error_event = threading.Event()
 
     while True:
-        motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event, error_event))
-        motor2 = threading.Thread(target=motor_thread, args=(DIR_2, STEP_2, goal_2, hit_event2, win_event, error_event))
+        motor1 = threading.Thread(target=motor_thread, args=(motor_1, hit_event1, win_event, error_event))
+        motor2 = threading.Thread(target=motor_thread, args=(motor_2, hit_event2, win_event, error_event))
         sensor = threading.Thread(target=sensor_thread, args=(hit_event1, hit_event2,  win_event, error_event, targets))
 
         motor1.start()
@@ -188,5 +109,5 @@ if __name__ == '__main__':
         hit_event2.clear()
 
 
-    GPIO.cleanup()
     print("GAME OVER")
+    GPIO.cleanup()
