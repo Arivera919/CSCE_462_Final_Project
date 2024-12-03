@@ -163,9 +163,9 @@ if __name__ == '__main__':
     error_event = threading.Event()
 
     while True:
-        motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event))
-        motor2 = threading.Thread(target=motor_thread, args=(DIR_2, STEP_2, goal_2, hit_event2, win_event))
-        sensor = threading.Thread(target=sensor_thread, args=(hit_event1, hit_event2,  win_event, targets))
+        motor1 = threading.Thread(target=motor_thread, args=(DIR_1, STEP_1, goal_1, hit_event1, win_event, error_event))
+        motor2 = threading.Thread(target=motor_thread, args=(DIR_2, STEP_2, goal_2, hit_event2, win_event, error_event))
+        sensor = threading.Thread(target=sensor_thread, args=(hit_event1, hit_event2,  win_event, error_event, targets))
 
         motor1.start()
         motor2.start()
