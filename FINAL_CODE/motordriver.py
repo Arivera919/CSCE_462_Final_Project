@@ -70,7 +70,7 @@ class Motor:
             GPIO.output(self.dir, self.CW)
             self.currentDir = self.CW
 
-        while (self.step != 0):
+        while (self.steps != 0):
             self.motor_step()
         
         #GPIO.cleanup()
