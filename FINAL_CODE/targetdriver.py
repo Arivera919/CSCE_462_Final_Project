@@ -28,9 +28,13 @@ class Target:
         self.threshold = threshold
 
     def detectHit(self, sel):
-        #filter out no signal: 0.0
         v = self.chan0.voltage if sel==0 else self.chan1.voltage
         v2 = self.chan0.voltage if sel==0 else self.chan1.voltage
+
+        #filter out no signal: 0.0
+        if v * v2 == 0.0:
+            raise Exception("No signal")
+
         hit = v < self.threshold and v != 0.0 and v2 < self.threshold and v2 != 0.0
         
 
