@@ -37,7 +37,7 @@ class Motor:
         elif (self.currentDir == CCW):
             self.steps = self.steps - 1
 
-    def change_dir(self, direction=self.currentDir, first_hit=false):
+    def change_dir(self, direction=-1, first_hit=false):
         sleep(0.5)
 
         if (direction == CW):
@@ -46,6 +46,13 @@ class Motor:
         elif (direction == CCW):
             GPIO.output(self.dir, CW)
             self.currentDir = CW
+        else:
+            if (self.currentDir == CW):
+                GPIO.output(self.dir, CCW)
+                self.currentDir = CCW
+            elif (self.currentDir == CCW):
+                GPIO.output(self.dir, CW)
+                self.currentDir = CW
         
         if not first_hit:
             self.sleepTime = self.sleepTime / 2
