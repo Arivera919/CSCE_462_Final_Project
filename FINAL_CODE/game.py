@@ -12,8 +12,7 @@ def motor_thread(motor, hit_event, win_event, error_event):
     motor.change_dir()
     motor.normal_start()
 
-    while not hit_event.is_set() and not win_event.is_set(): 
-        #target will not move until a hit is detected
+    hit_event.wait() #target will not move until a hit is detected
     
     print("hit!")
 
