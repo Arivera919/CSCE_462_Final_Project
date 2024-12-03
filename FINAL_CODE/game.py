@@ -11,7 +11,7 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
 
     steps = 0
     sleepTime = 0.005/4
-
+    currentDir = CW
     
     #the game started normally
     while True:
@@ -20,14 +20,15 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
         sleep(0.005/32) #determine how fast stepper motor will run
         GPIO.output(STEP, GPIO.LOW)
         sleep(0.005/32)
-        if (DIR == CW):
+        if (currentDir == CW):
             steps = steps + 1
-        elif (DIR == CCW):
+        elif (currentDir == CCW):
             steps = steps - 1
         
         if (steps == 100):
             sleep(0.5)
             GPIO.output(DIR, CCW)
+            currentDir = CCW
         elif (steps == -100):
             break
 
@@ -113,7 +114,11 @@ def motor_thread(DIR, STEP, goal, hit_event, win_event, error_event):
 
     return
 
-#TODO: Integrate Target class
+
+#def motor_step(DIR, STEP, sleepTime):
+
+
+
 def sensor_thread(hit_event1, hit_event2,  win_event, error_event, sensor):
 
     try:
