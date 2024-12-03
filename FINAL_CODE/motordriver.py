@@ -3,8 +3,8 @@ from time import sleep
 
 class Motor:
 
-    CW = 1
-    CCW = 0
+    self.CW = 1
+    self.CCW = 0
 
     def __init__(self, DIR, STEP, goal):
         #setup GPIO pins for motor
@@ -37,7 +37,7 @@ class Motor:
         elif (self.currentDir == CCW):
             self.steps = self.steps - 1
 
-    def change_dir(self, direction=-1, first_hit=false):
+    def change_dir(self, direction=-1, first_hit=False):
         sleep(0.5)
 
         if (direction == CW):
@@ -54,7 +54,7 @@ class Motor:
                 GPIO.output(self.dir, CW)
                 self.currentDir = CW
         
-        if not first_hit:
+        if first_hit:
             self.sleepTime = self.sleepTime / 2
 
     def check_win(self):

@@ -17,7 +17,7 @@ def motor_thread(motor, hit_event, win_event, error_event):
 
 
     currentDir = random.choice([1, 0])
-    motor.change_dir(currentDir, False)
+    motor.change_dir(currentDir, True)
     hit_event.clear()
 
     while not win_event.is_set() and not error_event.is_set():
