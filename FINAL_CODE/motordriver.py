@@ -31,6 +31,7 @@ class Motor:
         GPIO.output(self.step, GPIO.HIGH)
         sleep(self.sleepTime)
         GPIO.output(self.step, GPIO.LOW)
+        sleep(self.sleepTime)
 
         if (self.currentDir == self.CW):
             self.steps = self.steps + 1
@@ -72,6 +73,8 @@ class Motor:
 
         while (self.steps != 0):
             self.motor_step()
+
+        self.sleepTime = 0.005/4
         
         #GPIO.cleanup()
 
